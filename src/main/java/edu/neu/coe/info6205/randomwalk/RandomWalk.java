@@ -20,9 +20,8 @@ public class RandomWalk {
      * @param dy the distance he moves in the y direction
      */
     private void move(int dx, int dy) {
-        // FIXME do move by replacing the following code
-         throw new RuntimeException("Not implemented");
-        // END 
+        x += dx;
+        y += dy;
     }
 
     /**
@@ -31,8 +30,9 @@ public class RandomWalk {
      * @param m the number of steps the drunkard takes
      */
     private void randomWalk(int m) {
-        // FIXME
-        // END 
+        for (int i = 0; i < m; i++) {
+            randomMove();
+        }
     }
 
     /**
@@ -51,9 +51,7 @@ public class RandomWalk {
      * @return the (Euclidean) distance from the origin to the current position.
      */
     public double distance() {
-        // FIXME by replacing the following code
-         return 0.0;
-        // END 
+        return Math.sqrt(x*x + y*y);
     }
 
     /**
@@ -74,13 +72,16 @@ public class RandomWalk {
     }
 
     public static void main(String[] args) {
-        if (args.length == 0)
-            throw new RuntimeException("Syntax: RandomWalk steps [experiments]");
-        int m = Integer.parseInt(args[0]);
-        int n = 30;
-        if (args.length > 1) n = Integer.parseInt(args[1]);
-        double meanDistance = randomWalkMulti(m, n);
-        System.out.println(m + " steps: " + meanDistance + " over " + n + " experiments");
-    }
+//        if (args.length == 0)
+//            throw new RuntimeException("Syntax: RandomWalk steps [experiments]");
+        //array for sample runs
+        //int m_array[] =  new int[]{ 10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200 };       //Integer.parseInt(args[0]);
 
+        int n = 100;
+        if (args.length > 1) n = Integer.parseInt(args[1]);
+        for (int m=0;m<100;m++) {//loop for iterating automatically from 1 to 100
+            double meanDistance = randomWalkMulti(m, n);
+            System.out.println(m + " steps: " + meanDistance + " over " + n + " experiments");
+        }
+    }
 }
