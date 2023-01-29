@@ -18,6 +18,7 @@ public class ThreeSumBenchmark {
     public void runBenchmarks() {
         System.out.println("ThreeSumBenchmark: N=" + n);
         benchmarkThreeSum("ThreeSumQuadratic", (xs) -> new ThreeSumQuadratic(xs).getTriples(), n, timeLoggersQuadratic);
+        benchmarkThreeSum("ThreeSumQuadraticWithCalipers", (xs) -> new ThreeSumQuadraticWithCalipers(xs).getTriples(), n, timeLoggersQuadraticWithCallipers);
         benchmarkThreeSum("ThreeSumQuadrithmic", (xs) -> new ThreeSumQuadrithmic(xs).getTriples(), n, timeLoggersQuadrithmic);
         benchmarkThreeSum("ThreeSumCubic", (xs) -> new ThreeSumCubic(xs).getTriples(), n, timeLoggersCubic);
     }
@@ -34,9 +35,19 @@ public class ThreeSumBenchmark {
 
     private void benchmarkThreeSum(final String description, final Consumer<int[]> function, int n, final TimeLogger[] timeLoggers) {
         if (description.equals("ThreeSumCubic") && n > 4000) return;
-        // FIXME
-        // END 
-    }
+
+        UnaryOperator<int[]> preCheck = (xs) -> {
+            if (xs.length < n * 95 / 100) {
+                System.err.println("Insufficient ints: " + xs.length);
+                return null;
+            } else return xs;
+        };
+        final double t1 = new Benchmark_Timer<>(description, preCheck, function).runFromSupplier(supplier, runs);
+        for (TimeLogger timeLogger : timeLoggers) timeLogger.log(t1, n);
+        }
+
+
+
 
     private final static TimeLogger[] timeLoggersCubic = {
             new TimeLogger("Raw time per run (mSec): ", (time, n) -> time),
@@ -50,6 +61,11 @@ public class ThreeSumBenchmark {
             new TimeLogger("Raw time per run (mSec): ", (time, n) -> time),
             new TimeLogger("Normalized time per run (n^2): ", (time, n) -> time / n / n * 1e6)
     };
+    private final static TimeLogger[] timeLoggersQuadraticWithCallipers = {
+            new TimeLogger("Raw time per run (mSec): ", (time, n) -> time),
+            new TimeLogger("Normalized time per run (n^2): ", (time, n) -> time / n / n * 1e6)
+    };
+
 
     private final int runs;
     private final Supplier<int[]> supplier;
