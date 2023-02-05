@@ -59,20 +59,21 @@ public class Timer {
      */
     public <T, U> double repeat(int n, Supplier<T> supplier, Function<T, U> function, UnaryOperator<T> preFunction, Consumer<U> postFunction) {
         logger.trace("repeat: with " + n + " runs");
-        for (int i = 0; i < n; i++) {
-            pause(); // pausing before working with supplier as it is not to be timed
-            T t = supplier.get(); // value of supplier stored in T
-            if (preFunction != null) preFunction.apply(t); // checking whether preFunction is null
-            resume(); // resuming the timer
-            U u = function.apply(t); // converting T to U and then timing it
-            pauseAndLap(); // pausing and then incrementing the lap as postFunction is not to be timed
-            if (postFunction != null) { // checking whether postFunction is null
-                postFunction.accept(u);
-            }
-            resume(); // resuming the timer
-        }
         pause();
-        return meanLapTime(); // returning time in milliseconds
+        for(int i = 0; i < n; i++) {
+            T t= supplier.get();
+            if(preFunction!=null){
+                t=preFunction.apply(supplier.get());
+            }
+            resume();
+            U u=function.apply(t);
+            pauseAndLap();
+            if(postFunction!=null) postFunction.accept(u);
+        }
+
+        final double result=meanLapTime();
+        resume();
+        return result;
     }
 
     /**
