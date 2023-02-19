@@ -12,18 +12,21 @@ import java.util.concurrent.ForkJoinPool;
 
 /**
  * This code has been fleshed out by Ziyao Qiao. Thanks very much.
- * CONSIDER tidy it up a bit.
+ * TODO tidy it up a bit.
  */
 public class Main {
 
     public static void main(String[] args) {
         processArgs(args);
-        System.out.println("Degree of parallelism: " + ForkJoinPool.getCommonPoolParallelism());
+        //System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "32");
+        System.out.println("Degree of parallelism: " + ParSort.thread_Pool.getParallelism());
         Random random = new Random();
-        int[] array = new int[2000000];
+        int[] array = new int[4000000]; // increase size for reconfirmation of thread count
+        System.out.println("Array Size : " + array.length);
         ArrayList<Long> timeList = new ArrayList<>();
-        for (int j = 50; j < 100; j++) {
-            ParSort.cutoff = 10000 * (j + 1);
+        //loop for different cutoff values
+        for (int j = 0; j < 50; j++) {
+            ParSort.cutoff = 40000 * (j + 1);
             // for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
             long time;
             long startTime = System.currentTimeMillis();
@@ -45,7 +48,7 @@ public class Main {
             BufferedWriter bw = new BufferedWriter(isr);
             int j = 0;
             for (long i : timeList) {
-                String content = (double) 10000 * (j + 1) / 2000000 + "," + (double) i / 10 + "\n";
+                String content = (double) i  + "\n";
                 j++;
                 bw.write(content);
                 bw.flush();
